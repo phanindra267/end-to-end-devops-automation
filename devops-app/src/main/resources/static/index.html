@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ultimate DevOps Control Center</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+    <div class="layout">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="logo-container">
+                <div class="logo">
+                    <i data-lucide="shield-check" size="32"></i>
+                    ULTIMATE.OPS
+                </div>
+            </div>
+            <nav class="nav-menu">
+                <a href="#" class="nav-link active"><i data-lucide="layout-grid"></i> Control Center</a>
+                <a href="/status.html" class="nav-link"><i data-lucide="activity"></i> System Health</a>
+                <a href="/git" class="nav-link"><i data-lucide="git-pull-request"></i> Version Control</a>
+                <a href="/metrics-view" class="nav-link"><i data-lucide="bar-chart-2"></i> Cloud Metrics</a>
+                <a href="/hello" class="nav-link"><i data-lucide="terminal"></i> API Console</a>
+            </nav>
+            <div class="sidebar-footer">
+                <div class="badge badge-success">CLUSTER ONLINE</div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main">
+            <header class="top-bar">
+                <div class="page-title">
+                    <h1>Command Center</h1>
+                    <p style="color: var(--text-dim)">Orchestrating Cloud-Native Ecosystems.</p>
+                </div>
+                <button class="btn-deploy" id="deployBtn">Deploy to Production</button>
+            </header>
+
+            <!-- Deployment Pipeline -->
+            <section class="pipeline-section">
+                <div class="pipeline-container">
+                    <div class="pipeline-steps">
+                        <div class="step" id="step-build">
+                            <i data-lucide="box" size="32"></i>
+                            <span class="step-label">Build</span>
+                        </div>
+                        <div class="step" id="step-test">
+                            <i data-lucide="check-circle-2" size="32"></i>
+                            <span class="step-label">Unit Test</span>
+                        </div>
+                        <div class="step" id="step-scan">
+                            <i data-lucide="shield" size="32"></i>
+                            <span class="step-label">Sec Scan</span>
+                        </div>
+                        <div class="step" id="step-push">
+                            <i data-lucide="upload-cloud" size="32"></i>
+                            <span class="step-label">Push ECR</span>
+                        </div>
+                        <div class="step" id="step-deploy">
+                            <i data-lucide="zap" size="32"></i>
+                            <span class="step-label">K8s Deploy</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Dashboard Content -->
+            <div class="dash-grid">
+                <!-- Log Console -->
+                <section class="console-card">
+                    <div class="console-header">
+                        <div class="dot red"></div>
+                        <div class="dot yellow"></div>
+                        <div class="dot green"></div>
+                        <span style="margin-left: 10px; font-size: 0.7rem; color: var(--text-dim)">system.log</span>
+                    </div>
+                    <div class="console-content" id="console">
+                        <div class="log-line">> [SYSTEM] Initializing kernel...</div>
+                        <div class="log-line">> [NETWORK] VPC established at 10.0.0.0/16</div>
+                        <div class="log-line">> [K8S] Cluster devops-eks-cluster ready.</div>
+                        <div class="log-line">> [INFO] Application listening on port 8081.</div>
+                    </div>
+                </section>
+
+                <!-- Game Center -->
+                <section class="game-card">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                        <h2 style="margin: 0">Gaming Zone</h2>
+                        <select id="gameSelect" style="background: var(--glass); color: white; border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; padding: 5px;">
+                            <option value="snake">Snake (Orchestrator)</option>
+                            <option value="bug">Bug Squasher</option>
+                        </select>
+                    </div>
+                    <div style="background: #000; border-radius: 16px; padding: 10px; box-shadow: 0 0 20px rgba(0, 242, 254, 0.1)">
+                        <canvas id="gameCanvas" width="300" height="300"></canvas>
+                    </div>
+                    <div class="game-controls-ui">
+                        <div class="score-board">Score: <span id="score">0</span></div>
+                        <button class="btn-deploy" id="startBtn" style="padding: 0.5rem 1.5rem; font-size: 0.8rem">Play</button>
+                    </div>
+                </section>
+
+                <!-- Interactive Cluster Map -->
+                <section class="game-card" style="grid-column: span 2">
+                    <h2 style="margin-bottom: 1.5rem">Interactive Cluster Map</h2>
+                    <div id="clusterMap" style="height: 200px; display: flex; justify-content: space-around; align-items: center; background: rgba(0,0,0,0.2); border-radius: 20px; padding: 20px;">
+                        <div class="node-item" onclick="showNode('Node-A', 'Healthy')">
+                            <i data-lucide="server" size="48" color="#10b981"></i>
+                            <p style="margin-top: 10px">Node-A</p>
+                        </div>
+                        <div class="node-item" onclick="showNode('Node-B', 'High Load')">
+                            <i data-lucide="server" size="48" color="#f59e0b"></i>
+                            <p style="margin-top: 10px">Node-B</p>
+                        </div>
+                        <div class="node-item" onclick="showNode('Node-C', 'Healthy')">
+                            <i data-lucide="server" size="48" color="#10b981"></i>
+                            <p style="margin-top: 10px">Node-C</p>
+                        </div>
+                        <div class="node-item" onclick="showNode('Node-D', 'Cold Standby')">
+                            <i data-lucide="server" size="48" color="#64748b"></i>
+                            <p style="margin-top: 10px">Node-D</p>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </main>
+    </div>
+
+    <div id="modalOverlay" class="modal-overlay">
+        <div class="modal-content">
+            <h2 id="modalTitle" style="margin-bottom: 1.5rem; color: var(--primary);"></h2>
+            <div id="modalBody" style="color: var(--text-dim); line-height: 1.8; margin-bottom: 2rem;"></div>
+            <button class="btn-deploy" onclick="closeModal()">Close</button>
+        </div>
+    </div>
+
+    <div id="toastContainer" class="toast-container"></div>
+
+    <script src="js/snake.js"></script>
+    <script src="js/bug-squasher.js"></script>
+    <script>
+        lucide.createIcons();
+
+        // UI Helpers
+        function showModal(title, content) {
+            document.getElementById('modalTitle').innerText = title;
+            document.getElementById('modalBody').innerHTML = content;
+            document.getElementById('modalOverlay').classList.add('active');
+        }
+
+        function closeModal() {
+            document.getElementById('modalOverlay').classList.remove('active');
+        }
+
+        function showToast(message, type = 'info') {
+            const container = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            toast.className = 'toast';
+            const icon = type === 'success' ? 'check-circle' : (type === 'error' ? 'alert-circle' : 'info');
+            toast.innerHTML = `<i data-lucide="${icon}" color="${type === 'success' ? '#10b981' : '#ef4444'}"></i> ${message}`;
+            container.appendChild(toast);
+            lucide.createIcons();
+            setTimeout(() => toast.remove(), 4000);
+        }
+
+        window.showToast = showToast; // Export for games
+
+        // Terminal Log Functionality
+        const consoleEl = document.getElementById('console');
+        function addLog(msg, type = 'info') {
+            const line = document.createElement('div');
+            line.className = 'log-line';
+            line.style.color = type === 'success' ? '#10b981' : (type === 'error' ? '#ef4444' : '#64748b');
+            line.innerHTML = `> [${new Date().toLocaleTimeString()}] [${type.toUpperCase()}] ${msg}`;
+            consoleEl.appendChild(line);
+            consoleEl.scrollTop = consoleEl.scrollHeight;
+        }
+
+        // Game Selection Logic
+        const gameSelect = document.getElementById('gameSelect');
+        const playBtn = document.getElementById('startBtn');
+        
+        playBtn.addEventListener('click', () => {
+            if (gameSelect.value === 'snake') {
+                if (typeof window.stopBugGame === 'function') window.stopBugGame();
+                if (typeof window.startGame === 'function') window.startGame();
+            } else {
+                if (typeof window.startBugGame === 'function') window.startBugGame();
+            }
+        });
+
+        function showNode(name, status) {
+            addLog(`Cluster inspection: ${name} is currently ${status}.`, 'info');
+            const details = `
+                <div style="text-align: left;">
+                    <p><b>Status:</b> ${status}</p>
+                    <p><b>Region:</b> us-east-1</p>
+                    <p><b>Instance Type:</b> t3.medium</p>
+                    <p><b>Uptime:</b> 45 days, 4 hours</p>
+                    <p><b>IP Address:</b> 10.0.32.${Math.floor(Math.random() * 255)}</p>
+                </div>
+            `;
+            showModal(`Node Details: ${name}`, details);
+        }
+
+        // Deployment Simulation
+        const steps = ['build', 'test', 'scan', 'push', 'deploy'];
+        document.getElementById('deployBtn').addEventListener('click', async () => {
+            showToast('Starting Deployment Pipeline...', 'info');
+            addLog('Deployment pipeline triggered by user.', 'warning');
+            for (const stepId of steps) {
+                const el = document.getElementById('step-' + stepId);
+                el.classList.add('active');
+                addLog(`Running stage: ${stepId.toUpperCase()}...`, 'info');
+                await new Promise(r => setTimeout(r, 1500));
+                el.classList.remove('active');
+                el.classList.add('completed');
+                addLog(`Stage ${stepId.toUpperCase()} completed successfully.`, 'success');
+            }
+            addLog('Production deployment finished! All systems operational.', 'success');
+            showToast('Production Deployment Successful!', 'success');
+        });
+
+        // Periodic Random Logs
+        setInterval(() => {
+            const events = [
+                'Incoming request from 192.168.1.45',
+                'Health check passed for node-01',
+                'Scraping metrics for Prometheus...',
+                'VPC Peering connection stable',
+                'IAM Policy audit completed'
+            ];
+            addLog(events[Math.floor(Math.random() * events.length)]);
+        }, 8000);
+    </script>
+</body>
+</html>

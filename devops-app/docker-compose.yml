@@ -1,0 +1,98 @@
+version: '3.8'
+
+services:
+  # ============================================
+  # Spring Boot Application
+  # ============================================
+  devops-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: devops-app
+    ports:
+      - "8081:8081"
+    networks:
+      - devops-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8081/health"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    restart: unless-stopped
+    labels:
+      - "com.devops.service=application"
+      - "com.devops.tier=backend"
+
+  # ============================================
+  # Prometheus - Metrics Collection
+  # ============================================
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./monitoring/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus-data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--storage.tsdb.retention.time=15d'
+      - '--web.enable-lifecycle'
+      - '--web.console.libraries=/etc/prometheus/console_libraries'
+      - '--web.console.templates=/etc/prometheus/consoles'
+    networks:
+      - devops-network
+    depends_on:
+      devops-app:
+        condition: service_started
+    restart: unless-stopped
+    labels:
+      - "com.devops.service=monitoring"
+      - "com.devops.tier=observability"
+
+  # ============================================
+  # Grafana - Metrics Visualization
+  # ============================================
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+      - GF_USERS_ALLOW_SIGN_UP=false
+      - GF_SERVER_DOMAIN=localhost
+      - GF_DASHBOARDS_DEFAULT_HOME_DASHBOARD_PATH=/var/lib/grafana/dashboards/spring-boot-dashboard.json
+    volumes:
+      - ./monitoring/grafana/provisioning/datasources:/etc/grafana/provisioning/datasources:ro
+      - ./monitoring/grafana/provisioning/dashboards:/etc/grafana/provisioning/dashboards:ro
+      - ./monitoring/grafana/dashboards:/var/lib/grafana/dashboards:ro
+      - grafana-data:/var/lib/grafana
+    networks:
+      - devops-network
+    depends_on:
+      - prometheus
+    restart: unless-stopped
+    labels:
+      - "com.devops.service=visualization"
+      - "com.devops.tier=observability"
+
+# ============================================
+# Networks
+# ============================================
+networks:
+  devops-network:
+    driver: bridge
+    name: devops-network
+
+# ============================================
+# Persistent Volumes
+# ============================================
+volumes:
+  prometheus-data:
+    name: devops-prometheus-data
+  grafana-data:
+    name: devops-grafana-data

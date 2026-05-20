@@ -1,0 +1,5 @@
+com\example\devopsapp\service\AppService.class
+com\example\devopsapp\model\GitMetadata.class
+com\example\devopsapp\model\AppMetadata.class
+com\example\devopsapp\controller\AppController.class
+com\example\devopsapp\DevopsAppApplication.class

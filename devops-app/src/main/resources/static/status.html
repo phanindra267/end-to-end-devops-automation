@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>System Monitor | Ultimate.Ops</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        .monitor-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 2rem; margin-top: 2rem; }
+        .monitor-card { background: var(--card-bg); border-radius: 24px; padding: 2rem; border: 1px solid rgba(255, 255, 255, 0.05); }
+        .monitor-header { display: flex; align-items: center; gap: 15px; margin-bottom: 1.5rem; color: var(--primary); }
+        .monitor-data { font-family: 'Fira Code', monospace; background: rgba(0,0,0,0.3); padding: 1.5rem; border-radius: 16px; color: #10b981; }
+        .pulse { animation: pulse-red 2s infinite; }
+        @keyframes pulse-red { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
+    </style>
+</head>
+<body>
+    <div class="layout">
+        <aside class="sidebar">
+            <div class="logo-container"><div class="logo"><i data-lucide="shield-check" size="32"></i>ULTIMATE.OPS</div></div>
+            <nav class="nav-menu">
+                <a href="/" class="nav-link"><i data-lucide="layout-grid"></i> Control Center</a>
+                <a href="/status.html" class="nav-link active"><i data-lucide="activity"></i> System Health</a>
+                <a href="/git" class="nav-link"><i data-lucide="git-pull-request"></i> Version Control</a>
+                <a href="/metrics-view" class="nav-link"><i data-lucide="bar-chart-2"></i> Cloud Metrics</a>
+            </nav>
+        </aside>
+
+        <main class="main">
+            <header class="top-bar">
+                <div class="page-title">
+                    <h1>System Health</h1>
+                    <p style="color: var(--text-dim)">Real-time node and application status.</p>
+                </div>
+                <div class="badge badge-success">ALL SYSTEMS GO</div>
+            </header>
+
+            <div class="monitor-grid">
+                <div class="monitor-card">
+                    <div class="monitor-header"><i data-lucide="heart-pulse"></i> <h3>App Health</h3></div>
+                    <div class="monitor-data" id="healthData">Loading...</div>
+                </div>
+                <div class="monitor-card">
+                    <div class="monitor-header"><i data-lucide="git-branch"></i> <h3>VCS Status</h3></div>
+                    <div class="monitor-data" id="gitData">Loading...</div>
+                </div>
+                <div class="monitor-card" style="grid-column: span 2">
+                    <div class="monitor-header"><i data-lucide="info"></i> <h3>Application Metadata</h3></div>
+                    <div class="monitor-data" id="infoData">Loading...</div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        lucide.createIcons();
+        async function updateStats() {
+            try {
+                const [health, git, info] = await Promise.all([
+                    fetch('/health').then(r => r.json()),
+                    fetch('/git').then(r => r.json()),
+                    fetch('/info').then(r => r.json())
+                ]);
+                
+                document.getElementById('healthData').innerHTML = `STATUS: ${health.status}<br>MSG: ${health.message}`;
+                document.getElementById('gitData').innerHTML = `BRANCH: ${git.branch}<br>COMMIT: ${git.commitId}`;
+                document.getElementById('infoData').innerHTML = `NAME: ${info.name}<br>VERSION: ${info.version}<br>RUNTIME: ${info.javaVersion}`;
+            } catch (e) {
+                console.error(e);
+            }
+        }
+        updateStats();
+        setInterval(updateStats, 5000);
+    </script>
+</body>
+</html>
